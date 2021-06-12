@@ -487,9 +487,30 @@ robot.MoveJ([0,0,0,0,10,-200])
 <p><strong>(1.)新增onshape繪製之MTB_ROBOT</strong></p>
 <p><strong>日期:</strong>2021/06/11</p>
 <p><strong>共享連結:<br/><a href="https://cad.onshape.com/documents/499dacb4d6975aaaa3b94b07/w/c9adb62fa78569c2a9310092/e/bb6760cfa02f9b391a093811">https://cad.onshape.com/documents/499dacb4d6975aaaa3b94b07/w/c9adb62fa78569c2a9310092/e/bb6760cfa02f9b391a093811</a></strong></p>
-<p><strong>檔案下載:<br/>~~~~系統將更新~~~~</strong></p>
 <p><strong>影片操作:<br/><iframe allowfullscreen="allowfullscreen" height="315" src="//www.youtube.com/embed/aSRHZD9LbZ0" width="600"></iframe><br/></strong></p>
-<p><strong>(2.)建立coppeliaSim 4.1.0 MTB_robot 場景<br/>日期:2021/06/12<br/>Google Drive:<a href="https://drive.google.com/file/d/1lvztO1ZLYDNU6oJ4cZLSizdIxf_kRf1_/view?usp=sharing">40823251_MTB_robot載點.zip</a><br/><iframe allowfullscreen="allowfullscreen" height="315" src="//www.youtube.com/embed/us24foNvCAs" width="600"></iframe><br/></strong></p><h1>小組討論</h1>
+<p><strong>(2.)建立coppeliaSim 4.1.0 MTB_robot 場景<br/>日期:2021/06/12<br/>Google Drive:<a href="https://drive.google.com/file/d/1lvztO1ZLYDNU6oJ4cZLSizdIxf_kRf1_/view?usp=sharing">40823251_MTB_robot載點.zip</a><br/><iframe allowfullscreen="allowfullscreen" height="315" src="//www.youtube.com/embed/us24foNvCAs" width="600"></iframe>程式修改重點說明:<br/>1.請參考鍵盤鍵碼對照表修改指令:<br/></strong><strong><a href="http://web.tnu.edu.tw/me/study/moodle/tutor/vb6/tutor/r03/index.htm">http://web.tnu.edu.tw/me/study/moodle/tutor/vb6/tutor/r03/index.htm<br/></a></strong></p>
+<p><strong>2.按R鍵時軸1會+5角度，按L鍵時軸1會-5角度<br/>   按數字1鍵時軸2會+5角度，按數字2鍵時軸2會-5角度</strong></p>
+<pre class="brush:py;auto-links:false;toolbar:false" contenteditable="false">  if (auxiliaryData[1]==108) then --r right turn in degree
+                    -- if key r pressed axis1 angle adds 5 degrees
+                     rotation1 = rotation1 + 5*deg
+                     sim.setJointPosition(axis1, rotation1)
+                end -- if r
+                if (auxiliaryData[1]==114) then --l left turn in degree
+                    -- if key l pressed axis1 angle substract 5 degrees
+                     rotation1 = rotation1 - 5*deg
+                     sim.setJointPosition(axis1, rotation1)
+                end -- if l
+                 if (auxiliaryData[1]==49) then --l left1 turn in degree
+                    -- if key l pressed axis1 angle substract 5 degrees
+                     rotation2 = rotation2 + 5*deg
+                     sim.setJointPosition(axis2, rotation2)
+                end -- if 1
+                 if (auxiliaryData[1]==50) then --r left2 turn in degree
+                    -- if key l pressed axis1 angle substract 5 degrees
+                     rotation2 = rotation2 - 5*deg
+                     sim.setJointPosition(axis2, rotation2)
+                end -- if 2</pre>
+<p><strong><br/><br/><br/></strong></p><h1>小組討論</h1>
 <p>與組長或其他組員討論及修改的分支。</p>
 <h2>W1 影片討論</h2>
 <p><strong>2021/3/1 W1討論之影片</strong></p>

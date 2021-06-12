@@ -138,9 +138,10 @@ img.add_border {
 <p><strong>日期:</strong>2021/06/11</p>
 <p><strong>共享連結:<br/><a href="https://cad.onshape.com/documents/499dacb4d6975aaaa3b94b07/w/c9adb62fa78569c2a9310092/e/bb6760cfa02f9b391a093811">https://cad.onshape.com/documents/499dacb4d6975aaaa3b94b07/w/c9adb62fa78569c2a9310092/e/bb6760cfa02f9b391a093811</a></strong></p>
 <p><strong>影片操作:<br/><iframe allowfullscreen="allowfullscreen" height="315" src="//www.youtube.com/embed/aSRHZD9LbZ0" width="600"></iframe><br/></strong></p>
-<p><strong>(2.)建立coppeliaSim 4.1.0 MTB_robot 場景<br/>日期:2021/06/12<br/>Google Drive:<a href="https://drive.google.com/file/d/1lvztO1ZLYDNU6oJ4cZLSizdIxf_kRf1_/view?usp=sharing">40823251_MTB_robot載點.zip</a><br/><iframe allowfullscreen="allowfullscreen" height="315" src="//www.youtube.com/embed/us24foNvCAs" width="600"></iframe>程式修改重點說明:<br/>1.請參考鍵盤鍵碼對照表修改指令:<br/></strong><strong><a href="http://web.tnu.edu.tw/me/study/moodle/tutor/vb6/tutor/r03/index.htm">http://web.tnu.edu.tw/me/study/moodle/tutor/vb6/tutor/r03/index.htm<br/></a></strong></p>
-<p><strong>2.按R鍵時軸1會+5角度，按L鍵時軸1會-5角度<br/>   按數字1鍵時軸2會+5角度，按數字2鍵時軸2會-5角度</strong></p>
-<pre class="brush:py;auto-links:false;toolbar:false" contenteditable="false">  if (auxiliaryData[1]==108) then --r right turn in degree
+<p><strong>(2.)建立coppeliaSim 4.1.0 MTB_robot 場景<br/>日期:2021/06/12<br/>Google Drive:<a href="https://drive.google.com/file/d/1lvztO1ZLYDNU6oJ4cZLSizdIxf_kRf1_/view?usp=sharing">40823251_MTB_robot載點.zip</a></strong></p>
+<p><strong>影片操作:<br/><iframe allowfullscreen="allowfullscreen" height="315" src="//www.youtube.com/embed/us24foNvCAs" width="600"></iframe>程式修改重點說明:<br/>1.請參考鍵盤鍵碼對照表修改指令:<br/></strong><strong><a href="http://web.tnu.edu.tw/me/study/moodle/tutor/vb6/tutor/r03/index.htm">http://web.tnu.edu.tw/me/study/moodle/tutor/vb6/tutor/r03/index.htm<br/></a></strong></p>
+<p><strong>2.</strong>按R鍵時軸1會+5角度，按L鍵時軸1會-5角度。<br/>   按數字1鍵時軸2會+5角度，按數字2鍵時軸2會-5角度。</p>
+<pre class="brush:py;auto-links:false;html-script:true;toolbar:false" contenteditable="false">  if (auxiliaryData[1]==108) then --r right turn in degree
                     -- if key r pressed axis1 angle adds 5 degrees
                      rotation1 = rotation1 + 5*deg
                      sim.setJointPosition(axis1, rotation1)
@@ -160,7 +161,13 @@ img.add_border {
                      rotation2 = rotation2 - 5*deg
                      sim.setJointPosition(axis2, rotation2)
                 end -- if 2</pre>
-<p><strong><br/><br/><br/></strong></p><br />W15 影片翻譯 << <a href='W15 影片翻譯.html'>Previous</a> <a href='小組討論.html'>Next</a> >> 小組討論</div>
+<p><strong>(3.)手臂末端加入suction pad 吸盤<br/>註解:<br/></strong>1.由於此圖檔同取分項目2_ttt圖檔加入吸盤故沿用。<br/>2.影片中軸旋轉流暢，錄影時會出現lag情況。</p>
+<p><strong>影片操作:<br/><iframe allowfullscreen="allowfullscreen" height="315" src="//www.youtube.com/embed/Tu9tB-r_jy4" width="600"></iframe><br/></strong></p>
+<p><strong>新增方體及吸盤程式:<br/></strong></p>
+<pre class="brush:py;auto-links:false;html-script:true;toolbar:false" contenteditable="false">    BaseFrame=sim.getObjectHandle("BaseFrame")</pre>
+<pre class="brush:py;auto-links:false;html-script:true;toolbar:false" contenteditable="false">    suctionPad=sim.getObjectHandle('suctionPad')</pre>
+<p><strong> </strong></p>
+<p><strong>新增suctionpad_w14.lua-----按P吸住方體，按Q放下方體。<br/><br/></strong></p><br />W15 影片翻譯 << <a href='W15 影片翻譯.html'>Previous</a> <a href='小組討論.html'>Next</a> >> 小組討論</div>
         
     <!-- footer -->
       <div class="container">

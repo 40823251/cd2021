@@ -520,7 +520,8 @@ robot.MoveJ([0,0,0,0,10,-200])
 <pre class="brush:py;auto-links:false;html-script:true;toolbar:false" contenteditable="false">    suctionPad=sim.getObjectHandle('suctionPad')</pre>
 <p><strong> </strong></p>
 <p><strong>新增suctionpad_w14.lua-----按P吸住方體，按Q放下方體。<br/></strong></p>
-<p><strong>(4.)逆向運算學函式       日期:2021/06/13<br/>影片操作:<br/><iframe allowfullscreen="allowfullscreen" height="315" src="//www.youtube.com/embed/W3qOkwNZoxE" width="600"></iframe></strong></p>
+<p><strong>(4.)逆向運算學函式       日期:2021/06/13</strong></p>
+<p><strong>方法一<br/>影片操作:<br/><iframe allowfullscreen="allowfullscreen" height="315" src="//www.youtube.com/embed/W3qOkwNZoxE" width="600"></iframe></strong></p>
 <p><strong>程式說明:<br/></strong></p>
 <pre class="brush:py;auto-links:false;html-script:true;toolbar:false" contenteditable="false">joint01=sim.getObjectHandle('joint1')   設定各軸的程式
     joint02=sim.getObjectHandle('joint2')
@@ -674,7 +675,166 @@ function sysCall_sensing()
         end
     end
 end </pre>
-<p><strong>(5.)Python remote API逆向運算學函式<br/>影片操作:<br/><iframe allowfullscreen="allowfullscreen" height="315" src="//www.youtube.com/embed/pqWcJpVcRVA" width="600"></iframe></strong></p>
+<p><strong>方法二      更新時間:2021/06/14<br/>影片操作:<br/><iframe allowfullscreen="allowfullscreen" height="315" src="//www.youtube.com/embed/9RfLIE4A_Fo" width="600"></iframe><br/></strong></p>
+<p><strong>說明:<br/></strong>利用w15影片中的算式去求到Q1、Q2並帶入程式。<br/>本次操作利用知道a1和a2將值帶入程式中，並將運算程式寫入lua內自動求得Q1、Q2 。</p>
+<p><strong>程式:<br/></strong></p>
+<pre class="brush:py;auto-links:false;html-script:true;toolbar:false" contenteditable="false">function sysCall_threadmain()    此處為老師w15運算公式。
+    function round(x, n)
+        n = math.pow(10, n or 0)
+        x = x * n
+        if x &gt;= 0 then x = math.floor(x + 0.5) else x = math.ceil(x - 0.5) end
+        return x / n
+    end
+     
+    deg = 180/math.pi
+    a1 = 0.47   此為圖檔第一段力臂尺寸。
+    a2 = 0.4     此為第二段力臂尺寸。
+    angle=math.pi/180
+    function ik(x, y)
+        if (x^2 + y^2) &lt;= (a1+ a2)^2 then
+            q2 = -math.acos((x^2+y^2-a1^2-a2^2)/(2*a1*a2))
+            q1 = math.atan2(y, x) + math.atan2((a2*math.sin(q2)), (a1+a2*math.cos(q2)))
+            return {round(q1*deg, 4), round(q2*deg, 4)}
+        else
+            print("Over range!")
+        end
+        theta = ik(0.7, 0.2)
+end
+    joint01=sim.getObjectHandle('joint1')   一樣設定軸。
+    joint02=sim.getObjectHandle('joint2')
+    joint03=sim.getObjectHandle('joint3')
+    jointz=sim.getObjectHandle('jointz')
+    suctionPad=sim.getObjectHandle('suctionPad')
+    while(true)
+        do
+            sim.setJointTargetPosition(jointz,-0.06) 
+            sim.wait(2)
+            sim.setScriptSimulationParameter(sim.getScriptAssociatedWithObject(suctionPad),'active','ture')   
+            啟動吸盤程式。
+            sim.wait(2)
+            sim.setJointTargetPosition(jointz,0)
+            sim.wait(2)
+            theta = ik(0.7, 0.2)   執行點x.y相反故位置互換。
+            sim.wait(2)
+            sim.setJointTargetPosition(joint01,-theta[1]*angle)
+            sim.setJointTargetPosition(joint02,theta[2]*angle)
+            sim.wait(2)
+            sim.setScriptSimulationParameter(sim.getScriptAssociatedWithObject(suctionPad),'active','false')
+            sim.wait(4)
+            sim.setJointTargetPosition(jointz,-0.06)
+            sim.wait(2)
+            sim.setScriptSimulationParameter(sim.getScriptAssociatedWithObject(suctionPad),'active','ture')
+            sim.wait(2)
+            sim.setJointTargetPosition(jointz,0)
+            sim.wait(2)
+            theta = ik(-0.55, -0.3)
+            sim.wait(2)
+            sim.setJointTargetPosition(joint01,-theta[1]*angle)
+            sim.setJointTargetPosition(joint02,theta[2]*angle)
+            sim.wait(2)
+            sim.setJointTargetPosition(jointz,-0.06)
+            sim.wait(2)
+            sim.setScriptSimulationParameter(sim.getScriptAssociatedWithObject(suctionPad),'active','false')
+            sim.wait(2)
+            sim.setJointTargetPosition(jointz,0)
+            sim.wait(2)
+    end
+end</pre>
+<p><strong>吸盤程式:<br/></strong></p>
+<pre class="brush:py;auto-links:false;html-script:true;toolbar:false" contenteditable="false">function sysCall_init() 
+    s=sim.getObjectHandle('suctionPadSensor')
+    l=sim.getObjectHandle('suctionPadLoopClosureDummy1')
+    l2=sim.getObjectHandle('suctionPadLoopClosureDummy2')
+    b=sim.getObjectHandle('suctionPad')
+    suctionPadLink=sim.getObjectHandle('suctionPadLink')
+
+    infiniteStrength=sim.getScriptSimulationParameter(sim.handle_self,'infiniteStrength')
+    maxPullForce=sim.getScriptSimulationParameter(sim.handle_self,'maxPullForce')
+    maxShearForce=sim.getScriptSimulationParameter(sim.handle_self,'maxShearForce')
+    maxPeelTorque=sim.getScriptSimulationParameter(sim.handle_self,'maxPeelTorque')
+
+    sim.setLinkDummy(l,-1)
+    sim.setObjectParent(l,b,true)
+    m=sim.getObjectMatrix(l2,-1)
+    sim.setObjectMatrix(l,-1,m)
+end
+
+function sysCall_cleanup() 
+--[[
+    sim.setLinkDummy(l,-1)
+    sim.setObjectParent(l,b,true)
+    m=sim.getObjectMatrix(l2,-1)
+    sim.setObjectMatrix(l,-1,m)
+]]--
+end 
+
+function sysCall_sensing() 
+    parent=sim.getObjectParent(l)
+    if (sim.getScriptSimulationParameter(sim.handle_self,'active')==false) then
+        if (parent~=b) then
+            sim.setLinkDummy(l,-1)
+            sim.setObjectParent(l,b,true)
+            m=sim.getObjectMatrix(l2,-1)
+            sim.setObjectMatrix(l,-1,m)
+        end
+    else
+        if (parent==b) then
+            -- Here we want to detect a respondable shape, and then connect to it with a force sensor (via a loop closure dummy dummy link)
+            -- However most respondable shapes are set to "non-detectable", so "sim.readProximitySensor" or similar will not work.
+            -- But "sim.checkProximitySensor" or similar will work (they don't check the "detectable" flags), but we have to go through all shape objects!
+            index=0
+            while true do
+                shape=sim.getObjects(index,sim.object_shape_type)
+                if (shape==-1) then
+                    break
+                end
+                if (shape~=b) and (sim.getObjectInt32Parameter(shape,sim.shapeintparam_respondable)~=0) and (sim.checkProximitySensor(s,shape)==1) then
+                    -- Ok, we found a respondable shape that was detected
+                    -- We connect to that shape:
+                    -- Make sure the two dummies are initially coincident:
+                    sim.setObjectParent(l,b,true)
+                    m=sim.getObjectMatrix(l2,-1)
+                    sim.setObjectMatrix(l,-1,m)
+                    -- Do the connection:
+                    sim.setObjectParent(l,shape,true)
+                    sim.setLinkDummy(l,l2)
+                    break
+                end
+                index=index+1
+            end
+        else
+            -- Here we have an object attached
+            if (infiniteStrength==false) then
+                -- We might have to conditionally beak it apart!
+                result,force,torque=sim.readForceSensor(suctionPadLink) -- Here we read the median value out of 5 values (check the force sensor prop. dialog)
+                if (result&gt;0) then
+                    breakIt=false
+                    if (force[3]&gt;maxPullForce) then breakIt=true end
+                    sf=math.sqrt(force[1]*force[1]+force[2]*force[2])
+                    if (sf&gt;maxShearForce) then breakIt=true end
+                    if (torque[1]&gt;maxPeelTorque) then breakIt=true end
+                    if (torque[2]&gt;maxPeelTorque) then breakIt=true end
+                    if (breakIt) then
+                        -- We break the link:
+                        sim.setLinkDummy(l,-1)
+                        sim.setObjectParent(l,b,true)
+                        m=sim.getObjectMatrix(l2,-1)
+                        sim.setObjectMatrix(l,-1,m)
+                    end
+                end
+            end
+        end
+    end
+    if (sim.getSimulationState()==sim.simulation_advancing_lastbeforestop) then
+        sim.setLinkDummy(l,-1)
+        sim.setObjectParent(l,b,true)
+        m=sim.getObjectMatrix(l2,-1)
+        sim.setObjectMatrix(l,-1,m)
+    end
+end </pre>
+<p><strong><br/><br/></strong></p>
+<p><strong>(5.)Python remote API逆向運算學函式</strong></p>
+<p><strong>影片操作:<br/><iframe allowfullscreen="allowfullscreen" height="315" src="//www.youtube.com/embed/pqWcJpVcRVA" width="600"></iframe></strong></p>
 <p><strong>說明:<br/></strong>取分項目五可沿用取分項目四之coppeliaSim完成-將其主程式刪除。<br/><strong>程式:<br/></strong></p>
 <pre class="brush:py;auto-links:false;html-script:true;toolbar:false" contenteditable="false">import sim as vrep
 import math
@@ -1169,7 +1329,7 @@ if clientID != -1:
 <p><strong>影片操作:<br/><iframe allowfullscreen="allowfullscreen" height="315" src="//www.youtube.com/embed/aSRHZD9LbZ0" width="600"></iframe><br/></strong></p>
 <p><strong>(2.)建立coppeliaSim 4.1.0 MTB_robot 場景<br/>日期:2021/06/12<br/>Google Drive:<a href="https://drive.google.com/file/d/1lvztO1ZLYDNU6oJ4cZLSizdIxf_kRf1_/view?usp=sharing">40823251_MTB_robot載點.zip</a></strong></p>
 <p><strong>leo修改檔:<a href="/downloads/mtb_w15.zip">mtb_w16_leo.zip</a></strong></p>
-<p><strong>影片操作:<br/><iframe allowfullscreen="allowfullscreen" height="315" src="//www.youtube.com/embed/us24foNvCAs" width="600"></iframe></strong></p>
+<p><strong>影片操作:<br/><iframe allowfullscreen="allowfullscreen" height="315" src="//www.youtube.com/embed/8mvLFcV-Ys8" width="600"></iframe><br/></strong></p>
 <p><strong>程式修改重點說明:<br/>1.請參考鍵盤鍵碼對照表修改指令:<br/></strong><strong><a href="http://web.tnu.edu.tw/me/study/moodle/tutor/vb6/tutor/r03/index.htm">http://web.tnu.edu.tw/me/study/moodle/tutor/vb6/tutor/r03/index.htm<br/></a></strong></p>
 <p><strong>2.</strong>按R鍵時軸1會+5角度，按L鍵時軸1會-5角度。<br/>   按數字1鍵時軸2會+5角度，按數字2鍵時軸2會-5角度。</p>
 <pre class="brush:py;auto-links:false;html-script:true;toolbar:false" contenteditable="false">  if (auxiliaryData[1]==108) then --r right turn in degree
@@ -1193,7 +1353,7 @@ if clientID != -1:
                      sim.setJointPosition(axis2, rotation2)
                 end -- if 2</pre>
 <p><strong>(3.)手臂末端加入suction pad 吸盤<br/>註解:<br/></strong>1.由於此圖檔同取分項目2_ttt圖檔加入吸盤故沿用。<br/>2.影片中軸旋轉流暢，錄影時會出現lag情況。</p>
-<p><strong>影片操作:<br/><iframe allowfullscreen="allowfullscreen" height="315" src="//www.youtube.com/embed/Tu9tB-r_jy4" width="600"></iframe><br/></strong></p>
+<p><strong>影片操作:<br/><iframe allowfullscreen="allowfullscreen" height="315" src="//www.youtube.com/embed/0Yuf-hcSvZY" width="600"></iframe><br/></strong></p>
 <p><strong>新增方體及吸盤程式:<br/></strong></p>
 <pre class="brush:py;auto-links:false;html-script:true;toolbar:false" contenteditable="false">    BaseFrame=sim.getObjectHandle("BaseFrame")</pre>
 <pre class="brush:py;auto-links:false;html-script:true;toolbar:false" contenteditable="false">    suctionPad=sim.getObjectHandle('suctionPad')</pre>

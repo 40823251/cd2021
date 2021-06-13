@@ -489,6 +489,7 @@ robot.MoveJ([0,0,0,0,10,-200])
 <p><strong>共享連結:<br/><a href="https://cad.onshape.com/documents/499dacb4d6975aaaa3b94b07/w/c9adb62fa78569c2a9310092/e/bb6760cfa02f9b391a093811">https://cad.onshape.com/documents/499dacb4d6975aaaa3b94b07/w/c9adb62fa78569c2a9310092/e/bb6760cfa02f9b391a093811</a></strong></p>
 <p><strong>影片操作:<br/><iframe allowfullscreen="allowfullscreen" height="315" src="//www.youtube.com/embed/aSRHZD9LbZ0" width="600"></iframe><br/></strong></p>
 <p><strong>(2.)建立coppeliaSim 4.1.0 MTB_robot 場景<br/>日期:2021/06/12<br/>Google Drive:<a href="https://drive.google.com/file/d/1lvztO1ZLYDNU6oJ4cZLSizdIxf_kRf1_/view?usp=sharing">40823251_MTB_robot載點.zip</a></strong></p>
+<p><strong>leo修改檔:<a href="/downloads/mtb_w15.zip">mtb_w16_leo.zip</a></strong></p>
 <p><strong>影片操作:<br/><iframe allowfullscreen="allowfullscreen" height="315" src="//www.youtube.com/embed/us24foNvCAs" width="600"></iframe></strong></p>
 <p><strong>程式修改重點說明:<br/>1.請參考鍵盤鍵碼對照表修改指令:<br/></strong><strong><a href="http://web.tnu.edu.tw/me/study/moodle/tutor/vb6/tutor/r03/index.htm">http://web.tnu.edu.tw/me/study/moodle/tutor/vb6/tutor/r03/index.htm<br/></a></strong></p>
 <p><strong>2.</strong>按R鍵時軸1會+5角度，按L鍵時軸1會-5角度。<br/>   按數字1鍵時軸2會+5角度，按數字2鍵時軸2會-5角度。</p>
@@ -518,7 +519,42 @@ robot.MoveJ([0,0,0,0,10,-200])
 <pre class="brush:py;auto-links:false;html-script:true;toolbar:false" contenteditable="false">    BaseFrame=sim.getObjectHandle("BaseFrame")</pre>
 <pre class="brush:py;auto-links:false;html-script:true;toolbar:false" contenteditable="false">    suctionPad=sim.getObjectHandle('suctionPad')</pre>
 <p><strong> </strong></p>
-<p><strong>新增suctionpad_w14.lua-----按P吸住方體，按Q放下方體。<br/><br/></strong></p><h1>小組討論</h1>
+<p><strong>新增suctionpad_w14.lua-----按P吸住方體，按Q放下方體。<br/></strong></p>
+<p><strong>(4.)逆向運算學函式       日期:2021/06/13<br/>影片操作:<br/><iframe allowfullscreen="allowfullscreen" height="315" src="//www.youtube.com/embed/W3qOkwNZoxE" width="600"></iframe>程式說明:<br/></strong></p>
+<pre class="brush:py;auto-links:false;html-script:true;toolbar:false" contenteditable="false">joint01=sim.getObjectHandle('joint1')   設定各軸的程式
+    joint02=sim.getObjectHandle('joint2')
+    joint03=sim.getObjectHandle('joint3')
+    jointz=sim.getObjectHandle('jointz')
+    sim.setJointTargetPosition(joint01,0)   定位個軸點
+    sim.setJointTargetPosition(joint02,0)
+    sim.setJointTargetPosition(joint03,0)
+    sim.setJointTargetPosition(jointz,0)
+    sim.setIntegerSignal("pad_switch",1)
+    sim.setJointTargetPosition(jointz,-0.06)   吸盤向下0.06
+    sim.wait(2)   停頓2秒
+    sim.setJointTargetPosition(jointz,0)
+    sim.wait(2)
+    moving(0.2,0.7)    要求點一
+    sim.wait(2)
+    sim.setIntegerSignal("pad_switch",0)
+    sim.wait(2)
+    sim.setIntegerSignal("pad_switch",1)
+    sim.wait(2)
+    sim.setJointTargetPosition(jointz,-0.06)
+    sim.wait(2)
+    sim.setJointTargetPosition(jointz,0)
+    sim.wait(2)
+    moving(-0.3,-0.55)    要求點二
+    sim.wait(5)
+    sim.setIntegerSignal("pad_switch",0)
+    sim.wait(2)
+    sim.setIntegerSignal("pad_switch",1)
+    sim.wait(2)
+    sim.setJointTargetPosition(jointz,-0.06)
+    sim.wait(2)
+    sim.setJointTargetPosition(jointz,0)
+    sim.wait(2)</pre>
+<p><strong><br/><br/></strong></p><h1>小組討論</h1>
 <p>與組長或其他組員討論及修改的分支。</p>
 <h2>W1 影片討論</h2>
 <p><strong>2021/3/1 W1討論之影片</strong></p>

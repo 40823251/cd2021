@@ -169,7 +169,161 @@ img.add_border {
 <pre class="brush:py;auto-links:false;html-script:true;toolbar:false" contenteditable="false">    BaseFrame=sim.getObjectHandle("BaseFrame")</pre>
 <pre class="brush:py;auto-links:false;html-script:true;toolbar:false" contenteditable="false">    suctionPad=sim.getObjectHandle('suctionPad')</pre>
 <p><strong> </strong></p>
-<p><strong>新增suctionpad_w14.lua-----按P吸住方體，按Q放下方體。<br/><br/></strong></p><br />W15 影片翻譯 << <a href='W15 影片翻譯.html'>Previous</a> <a href='小組討論.html'>Next</a> >> 小組討論</div>
+<p><strong>新增suctionpad_w14.lua-----按P吸住方體，按Q放下方體。<br/></strong></p>
+<p><strong>(4.)逆向運算學函式       日期:2021/06/13<br/>影片操作:<br/><iframe allowfullscreen="allowfullscreen" height="315" src="//www.youtube.com/embed/W3qOkwNZoxE" width="600"></iframe>程式說明:<br/></strong></p>
+<pre class="brush:py;auto-links:false;html-script:true;toolbar:false" contenteditable="false">joint01=sim.getObjectHandle('joint1')   設定各軸的程式
+    joint02=sim.getObjectHandle('joint2')
+    joint03=sim.getObjectHandle('joint3')
+    jointz=sim.getObjectHandle('jointz')
+    sim.setJointTargetPosition(joint01,0)   定位個軸點
+    sim.setJointTargetPosition(joint02,0)
+    sim.setJointTargetPosition(joint03,0)
+    sim.setJointTargetPosition(jointz,0)
+    sim.setIntegerSignal("pad_switch",1)
+    sim.setJointTargetPosition(jointz,-0.06)   吸盤向下0.06
+    sim.wait(2)   停頓2秒
+    sim.setJointTargetPosition(jointz,0)
+    sim.wait(2)
+    moving(0.2,0.7)    要求點一
+    sim.wait(2)
+    sim.setIntegerSignal("pad_switch",0)
+    sim.wait(2)
+    sim.setIntegerSignal("pad_switch",1)
+    sim.wait(2)
+    sim.setJointTargetPosition(jointz,-0.06)
+    sim.wait(2)
+    sim.setJointTargetPosition(jointz,0)
+    sim.wait(2)
+    moving(-0.3,-0.55)    要求點二
+    sim.wait(5)
+    sim.setIntegerSignal("pad_switch",0)
+    sim.wait(2)
+    sim.setIntegerSignal("pad_switch",1)
+    sim.wait(2)
+    sim.setJointTargetPosition(jointz,-0.06)
+    sim.wait(2)
+    sim.setJointTargetPosition(jointz,0)
+    sim.wait(2)</pre>
+<p><strong>副程式運算面積及角度<br/></strong></p>
+<pre class="brush:py;auto-links:false;html-script:true;toolbar:false" contenteditable="false">    a=0.4
+    b=0.4
+    c=math.pow((math.pow(x,2)+math.pow(y,2)),0.5)
+    s=(a+b+c)/2
+    area=math.pow((s*(s-a)*(s-b)*(s-c)),0.5)
+    h=area/(2*c)
+    deg1_base=math.atan(x/y)
+    if x&lt;0 and y&lt;0 then
+        deg1_base=deg1_base+math.pi
+    end
+    deg1_tri=math.asin(h/a)
+    deg1=deg1_base+deg1_tri
+    deg2=math.pi-(0.5*math.pi-deg1_tri)-math.acos(h/b)
+    deg3=deg2-deg1
+    sim.setJointTargetPosition(joint01,deg1)
+    sim.setJointTargetPosition(joint02,-deg2)
+    sim.setJointTargetPosition(joint03,deg3)</pre>
+<p><strong>吸盤程式(由同學40823214提供給與學習)<br/></strong></p>
+<pre class="brush:py;auto-links:false;html-script:true;toolbar:false" contenteditable="false">function sysCall_init() 
+    objectHandle=sim.getObjectHandle('suctionPad')
+    sim.setUserParameter(objectHandle,'@enable','')
+    modelBase=sim.getObjectAssociatedWithScript(sim.handle_self)
+    robotBase=modelBase
+    while true do
+        robotBase=sim.getObjectParent(robotBase)
+        if robotBase==-1 then
+            robotName='Dobot'
+            break
+        end
+        robotName=sim.getObjectName(robotBase)
+        suffix,suffixlessName=sim.getNameSuffix(robotName)
+        if suffixlessName=='Dobot' then
+            break
+        end
+    end
+
+    s=sim.getObjectHandle('suctionPadSensor')
+    l=sim.getObjectHandle('suctionPadLoopClosureDummy1')
+    l2=sim.getObjectHandle('suctionPadLoopClosureDummy2')
+    b=sim.getObjectHandle('suctionPad')
+    suctionPadLink=sim.getObjectHandle('suctionPadLink')
+    local gripperBase=sim.getObjectAssociatedWithScript(sim.handle_self)
+
+    infiniteStrength=sim.getScriptSimulationParameter(sim.handle_self,'infiniteStrength')
+    maxPullForce=sim.getScriptSimulationParameter(sim.handle_self,'maxPullForce')
+    maxShearForce=sim.getScriptSimulationParameter(sim.handle_self,'maxShearForce')
+    maxPeelTorque=sim.getScriptSimulationParameter(sim.handle_self,'maxPeelTorque')
+
+    sim.setLinkDummy(l,-1)
+    sim.setObjectParent(l,b,true)
+    m=sim.getObjectMatrix(l2,-1)
+    sim.setObjectMatrix(l,-1,m)
+end
+
+function sysCall_cleanup() 
+    sim.setLinkDummy(l,-1)
+    sim.setObjectParent(l,b,true)
+    m=sim.getObjectMatrix(l2,-1)
+    sim.setObjectMatrix(l,-1,m)
+end 
+
+function sysCall_sensing() 
+    parent=sim.getObjectParent(l)
+    local sig=sim.getIntegerSignal("pad_switch")
+    if (not sig) or (sig==0) then
+        if (parent~=b) then
+            sim.setLinkDummy(l,-1)
+            sim.setObjectParent(l,b,true)
+            m=sim.getObjectMatrix(l2,-1)
+            sim.setObjectMatrix(l,-1,m)
+        end
+    else
+        if (parent==b) then
+            index=0
+            while true do
+                shape=sim.getObjects(index,sim.object_shape_type)
+                if (shape==-1) then
+                    break
+                end
+                local res,val=sim.getObjectInt32Parameter(shape,sim.shapeintparam_respondable)
+                if (shape~=b) and (val~=0) and (sim.checkProximitySensor(s,shape)==1) then
+                    -- Ok, we found a respondable shape that was detected
+                    -- We connect to that shape:
+                    -- Make sure the two dummies are initially coincident:
+                    sim.setObjectParent(l,b,true)
+                    m=sim.getObjectMatrix(l2,-1)
+                    sim.setObjectMatrix(l,-1,m)
+                    -- Do the connection:
+                    sim.setObjectParent(l,shape,true)
+                    sim.setLinkDummy(l,l2)
+                    break
+                end
+                index=index+1
+            end
+        else
+            -- Here we have an object attached
+            if (infiniteStrength==false) then
+                -- We might have to conditionally beak it apart!
+                result,force,torque=sim.readForceSensor(suctionPadLink) -- Here we read the median value out of 5 values (check the force sensor prop. dialog)
+                if (result&gt;0) then
+                    breakIt=false
+                    if (force[3]&gt;maxPullForce) then breakIt=true end
+                    sf=math.sqrt(force[1]*force[1]+force[2]*force[2])
+                    if (sf&gt;maxShearForce) then breakIt=true end
+                    if (torque[1]&gt;maxPeelTorque) then breakIt=true end
+                    if (torque[2]&gt;maxPeelTorque) then breakIt=true end
+                    if (breakIt) then
+                        -- We break the link:
+                        sim.setLinkDummy(l,-1)
+                        sim.setObjectParent(l,b,true)
+                        m=sim.getObjectMatrix(l2,-1)
+                        sim.setObjectMatrix(l,-1,m)
+                    end
+                end
+            end
+        end
+    end
+end </pre>
+<p><strong><br/><br/><br/><br/></strong></p><br />W15 影片翻譯 << <a href='W15 影片翻譯.html'>Previous</a> <a href='小組討論.html'>Next</a> >> 小組討論</div>
         
     <!-- footer -->
       <div class="container">

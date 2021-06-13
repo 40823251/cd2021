@@ -163,14 +163,14 @@ img.add_border {
                      rotation2 = rotation2 - 5*deg
                      sim.setJointPosition(axis2, rotation2)
                 end -- if 2</pre>
-<p><strong>(3.)手臂末端加入suction pad 吸盤<br/>註解:<br/></strong>1.由於此圖檔同取分項目2_ttt圖檔加入吸盤故沿用。<br/>2.影片中軸旋轉流暢，錄影時會出現lag情況。</p>
+<p><strong>(3.)手臂末端加入suction pad 吸盤<br/>註解:<br/></strong>1.由於此圖檔同取分項目2_ttt圖檔加入吸盤故沿用。<br/>2.影片中軸旋轉流暢，錄影時會出現lag情況。<br/><strong>Google Drive:<a href="https://drive.google.com/file/d/1u2_68JNqQEI5W7QxmSnVj_ByUW8GOG42/view?usp=sharing">40823251_W16_取分項目3.zip</a></strong></p>
 <p><strong>影片操作:<br/><iframe allowfullscreen="allowfullscreen" height="315" src="//www.youtube.com/embed/0Yuf-hcSvZY" width="600"></iframe><br/></strong></p>
 <p><strong>新增方體及吸盤程式:<br/></strong></p>
 <pre class="brush:py;auto-links:false;html-script:true;toolbar:false" contenteditable="false">    BaseFrame=sim.getObjectHandle("BaseFrame")</pre>
 <pre class="brush:py;auto-links:false;html-script:true;toolbar:false" contenteditable="false">    suctionPad=sim.getObjectHandle('suctionPad')</pre>
 <p><strong> </strong></p>
 <p><strong>新增suctionpad_w14.lua-----按P吸住方體，按Q放下方體。<br/></strong></p>
-<p><strong>(4.)逆向運算學函式       日期:2021/06/13</strong></p>
+<p><strong>(4.)逆向運算學函式       日期:2021/06/13<br/>Google Drive:<a href="https://drive.google.com/file/d/1g1AUsHQBjFfz8qqo5xQyhgM0E50IPH5E/view?usp=sharing">40823251_W16_取分項目4_方法一and方法二.zip</a><br/></strong></p>
 <p><strong>方法一<br/>影片操作:<br/><iframe allowfullscreen="allowfullscreen" height="315" src="//www.youtube.com/embed/W3qOkwNZoxE" width="600"></iframe></strong></p>
 <p><strong>程式說明:<br/></strong></p>
 <pre class="brush:py;auto-links:false;html-script:true;toolbar:false" contenteditable="false">joint01=sim.getObjectHandle('joint1')   設定各軸的程式
@@ -482,7 +482,8 @@ function sysCall_sensing()
         sim.setObjectMatrix(l,-1,m)
     end
 end </pre>
-<p><strong>(5.)Python remote API逆向運算學函式</strong></p>
+<p><strong>(5.)Python remote API逆向運算學函式<br/></strong></p>
+<p><strong>Google Drive:<a href="https://drive.google.com/file/d/1K_ZMW8Zj_3T41jtmzZLFFqRuC4jZGtZZ/view?usp=sharing">40823251_W16_取分項目五.zip</a></strong></p>
 <p><strong>影片操作:<br/><iframe allowfullscreen="allowfullscreen" height="315" src="//www.youtube.com/embed/pqWcJpVcRVA" width="600"></iframe></strong></p>
 <p><strong>說明:<br/></strong>取分項目五可沿用取分項目四之coppeliaSim完成-將其主程式刪除。<br/><strong>程式:<br/></strong></p>
 <pre class="brush:py;auto-links:false;html-script:true;toolbar:false" contenteditable="false">import sim as vrep
